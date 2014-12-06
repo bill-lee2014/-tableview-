@@ -1,8 +1,8 @@
 //
-//  HMViewController.h
-//  修改无限循环
+//  HMCirImageView.h
+//  手动实现循环机制
 //
-//  Created by leo on 14-12-5.
+//  Created by mac on 14-10-20.
 //  Copyright (c) 2014年 itheima. All rights reserved.
 //
 
