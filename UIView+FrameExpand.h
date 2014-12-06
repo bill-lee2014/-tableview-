@@ -1,14 +1,14 @@
 //
-//  UIView+MJ.h
-//  传智微博
+//  UIView+FrameExpand.h
+//  修改无限循环
 //
-//  Created by teacher on 14-6-6.
-//  Copyright (c) 2014年 itcast. All rights reserved.
+//  Created by leo on 14-12-6.
+//  Copyright (c) 2014年 itheima. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 
-@interface UIView (MJ)
+@interface UIView (FrameExpand)
 @property (nonatomic, assign) CGFloat x;
 @property (nonatomic, assign) CGFloat y;
 @property (nonatomic, assign) CGFloat centerX;

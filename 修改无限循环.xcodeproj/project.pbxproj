@@ -13,6 +13,7 @@
 		043E7FC41A3294D300C025DA /* 3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 043E7FBE1A3294D300C025DA /* 3.jpg */; };
 		043E7FC51A3294D300C025DA /* 4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 043E7FBF1A3294D300C025DA /* 4.jpg */; };
 		043E7FC61A3294D300C025DA /* 5.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 043E7FC01A3294D300C025DA /* 5.jpg */; };
+		04532AB91A334FF000E5C30E /* UIView+FrameExpand.m in Sources */ = {isa = PBXBuildFile; fileRef = 04532AB81A334FF000E5C30E /* UIView+FrameExpand.m */; };
 		04A368AE1A3184FD00174FA6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04A368AD1A3184FD00174FA6 /* Foundation.framework */; };
 		04A368B01A3184FD00174FA6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04A368AF1A3184FD00174FA6 /* CoreGraphics.framework */; };
 		04A368B21A3184FD00174FA6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04A368B11A3184FD00174FA6 /* UIKit.framework */; };
@@ -27,7 +28,6 @@
 		04A368D71A3184FE00174FA6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 04A368D51A3184FE00174FA6 /* InfoPlist.strings */; };
 		04A368D91A3184FE00174FA6 /* ______Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A368D81A3184FE00174FA6 /* ______Tests.m */; };
 		04A368E71A31864200174FA6 /* HMViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A368E61A31864200174FA6 /* HMViewController.m */; };
-		04A368FB1A318E2900174FA6 /* UIView+MJ.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A368FA1A318E2900174FA6 /* UIView+MJ.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +47,8 @@
 		043E7FBE1A3294D300C025DA /* 3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 3.jpg; sourceTree = "<group>"; };
 		043E7FBF1A3294D300C025DA /* 4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 4.jpg; sourceTree = "<group>"; };
 		043E7FC01A3294D300C025DA /* 5.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 5.jpg; sourceTree = "<group>"; };
+		04532AB71A334FF000E5C30E /* UIView+FrameExpand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+FrameExpand.h"; sourceTree = "<group>"; };
+		04532AB81A334FF000E5C30E /* UIView+FrameExpand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+FrameExpand.m"; sourceTree = "<group>"; };
 		04A368AA1A3184FD00174FA6 /* 修改无限循环.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "修改无限循环.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		04A368AD1A3184FD00174FA6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		04A368AF1A3184FD00174FA6 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -66,8 +68,6 @@
 		04A368D81A3184FE00174FA6 /* ______Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "______Tests.m"; sourceTree = "<group>"; };
 		04A368E51A31864200174FA6 /* HMViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HMViewController.h; sourceTree = "<group>"; };
 		04A368E61A31864200174FA6 /* HMViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HMViewController.m; sourceTree = "<group>"; };
-		04A368F91A318E2900174FA6 /* UIView+MJ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+MJ.h"; sourceTree = "<group>"; };
-		04A368FA1A318E2900174FA6 /* UIView+MJ.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+MJ.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,9 +110,9 @@
 		04A368A11A3184FD00174FA6 = {
 			isa = PBXGroup;
 			children = (
+				04532AB71A334FF000E5C30E /* UIView+FrameExpand.h */,
+				04532AB81A334FF000E5C30E /* UIView+FrameExpand.m */,
 				043E7FBA1A3294D300C025DA /* photo */,
-				04A368F91A318E2900174FA6 /* UIView+MJ.h */,
-				04A368FA1A318E2900174FA6 /* UIView+MJ.m */,
 				04A368E51A31864200174FA6 /* HMViewController.h */,
 				04A368E61A31864200174FA6 /* HMViewController.m */,
 				04A368B31A3184FD00174FA6 /* 修改无限循环 */,
@@ -288,8 +288,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				04A368E71A31864200174FA6 /* HMViewController.m in Sources */,
-				04A368FB1A318E2900174FA6 /* UIView+MJ.m in Sources */,
 				04A368BA1A3184FD00174FA6 /* main.m in Sources */,
+				04532AB91A334FF000E5C30E /* UIView+FrameExpand.m in Sources */,
 				04A368BE1A3184FD00174FA6 /* HMAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,14 +1,14 @@
 //
-//  UIView+MJ.m
-//  传智微博
+//  UIView+FrameExpand.m
+//  修改无限循环
 //
-//  Created by teacher on 14-6-6.
-//  Copyright (c) 2014年 itcast. All rights reserved.
+//  Created by leo on 14-12-6.
+//  Copyright (c) 2014年 itheima. All rights reserved.
 //
 
-#import "UIView+MJ.h"
+#import "UIView+FrameExpand.h"
 
-@implementation UIView (MJ)
+@implementation UIView (FrameExpand)
 - (void)setSize:(CGSize)size
 {
     CGRect frame = self.frame;
@@ -92,4 +92,5 @@
 {
     return self.center.y;
 }
+
 @end

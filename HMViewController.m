@@ -10,7 +10,7 @@
 
 
 #import "HMViewController.h"
-#import "UIView+MJ.h"
+#import "UIView+FrameExpand.h"
 
 #define HMImageCount 6
 /**
@@ -46,6 +46,10 @@
  *  cell的行数
  */
 #define CellCount 10
+/**
+ *  cell的高度
+ */
+#define CellH 44
 /**
  *  自定义导航栏标题字体大小
  */
@@ -146,6 +150,10 @@
  *  额外的滚动区域
  */
 @property (assign , nonatomic) CGFloat contentInsetY;
+/**
+ *  刷新控件
+ */
+@property (weak , nonatomic) UIRefreshControl * refreshControl;
 @end
 
 @implementation HMViewController
@@ -168,9 +176,12 @@
 {
     [super viewDidLoad];
     
+    //1 加载所有视图控件
     [self setUpData];
+    
 }
 
+#pragma mark - 加载视图控件
 - (void)setUpData
 {
     //1 初始化图片数组
@@ -273,7 +284,7 @@
     //第一组标题到顶部时:0ffset移动的距离也就是第一次offset垂直方向上偏移的距离(640) = 10 行 * 44行高 + 200(headView的高度) - 20(额外的滚动区域)
     
     self.rowNum = CellCount;// cell的行数,取决于组模型中的item的个数
-    self.rowHeight = ConstH;//cell的高度
+    self.rowHeight = CellH;//cell的高度
     self.headViewH = HeadViewH;//headView的高度
     self.contentInsetY = ContentInsetY;//额外的滚动区域
     self.firstOffsetY = self.rowNum * self.rowHeight + self.headViewH - self.contentInsetY;
@@ -332,6 +343,7 @@
     [self.scrollViewB setContentOffset:CGPointMake(self.scrollViewB.width, 0)];
 }
 
+
 - (NSArray *)getDisplayImagesWithCurpage:(NSInteger)page {
     
     NSInteger pre = [self validPageValue:_curPage-1];
@@ -340,6 +352,7 @@
     if (!_curImages) {
         _curImages = [[NSMutableArray alloc] init];
     }
+    
     
     [_curImages removeAllObjects];
     
