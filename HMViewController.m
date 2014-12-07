@@ -1,16 +1,16 @@
-//
-//  HMCirImageView.m
-//  手动实现循环机制
-//
+
 //  Created by mac on 14-10-20.
 //  Copyright (c) 2014年 itheima. All rights reserved.
-//
-
-
-
-
+/**
+ *  整个设计的思路
+ */
 #import "HMViewController.h"
 #import "UIView+FrameExpand.h"
+#import "HMImageModel.h"
+#import "HMOneViewController.h"
+
+// 随机色
+#define HMRandomColor [UIColor colorWithRed:arc4random_uniform(255)/255.0 green:arc4random_uniform(255)/255.0 blue:arc4random_uniform(255)/255.0 alpha:1]
 
 #define HMImageCount 6
 /**
@@ -45,7 +45,7 @@
 /**
  *  cell的行数
  */
-#define CellCount 10
+#define CellCount 5
 /**
  *  cell的高度
  */
@@ -80,7 +80,7 @@
 @property (assign , nonatomic) NSInteger curPage;
 @property (assign , nonatomic) NSInteger totalPages;
 /**
- *  存放所有图片的数组
+ *  存放所有图片模型的数组
  */
 @property (strong , nonatomic) NSMutableArray * imagesArray;
 /**
@@ -99,7 +99,11 @@
 @property (assign , nonatomic) int index;
 
 #pragma mark - tableview相关
+/**
+ *  tableView的headView
+ */
 @property (weak , nonatomic) UIView * headView;
+
 @property (weak, nonatomic) UITableView *tableview;
 /**
  *  后面的scrollView
@@ -154,43 +158,94 @@
  *  刷新控件
  */
 @property (weak , nonatomic) UIRefreshControl * refreshControl;
+/**
+ *  scrollView上的button
+ */
+@property (weak , nonatomic) UIButton * scrBtn;
+
 @end
+
+
 
 @implementation HMViewController
 
-
+#pragma mark - 懒加载循环容器数组
+/**
+ *  循环容器数组
+ */
+- (NSMutableArray *)curImages
+{
+    if (!_curImages) {
+        _curImages = [[NSMutableArray alloc] init];
+    }
+    return _curImages;
+}
 /**
  *  模拟数据
  */
-
 - (NSArray *)data
 {
     if (_data == nil) {
-        _data = @[@"0组标题",@"1组标题",@"2组标题",@"3组标题",@"4组标题"];
+        _data = @[@"0组标题",@"1组标题",@"2组标题",@"3组标题",@"4组标题",@"5组标题"];
     }
     return _data;
 }
 
+/**
+ *  图片模型数组
+ */
+- (NSMutableArray *)imagesArray
+{
+    if (_imagesArray == nil) {
+        _imagesArray = [[NSMutableArray alloc] init];
+    }
+    return _imagesArray;
+}
 
+
+#pragma mark - viewDidLoad
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    //1 加载所有视图控件
+    //1 初始化数组数据(从服务器请求数据,请求回来的数据转换成HMImageModel)
+    for (int i = 0 ; i < HMImageCount; i++) {
+        NSString * imageName = [NSString stringWithFormat:@"%d.jpg",i];
+        HMImageModel * imageModel = [[HMImageModel alloc] init];
+        imageModel.imageName = imageName;
+        imageModel.desc = [NSString stringWithFormat:@"第%d张妹子图,如果觉得漂亮点个赞",i];
+        
+        [self.imagesArray addObject:imageModel];
+    }
+    
     [self setUpData];
+    [self refreshScrollView];
+    [self addTimer];
+    [self addPageControl];
+    
+}
+
+#pragma mark - 点击了图片轮播器上的图片(在这个方法里跳转轮播器图片所对应的控制器)
+- (void)clickScrollViewPic
+{
+//    NSLog(@"点击了%@===200行",[self.curImages[1] imageName]);
+    HMOneViewController * vc = [[HMOneViewController alloc] init];
+    // 1 取出当前显示的图片的模型
+    HMImageModel * imageModel = self.curImages[1];
+  
+    vc.view.backgroundColor = HMRandomColor;
+    UINavigationController * nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    vc.navigationItem.title = [ NSString stringWithFormat:@"%@对应的控制器",imageModel.imageName];
+    //通过模型将图片名传递过去,
+    vc.imageModel = imageModel;
+    [self presentViewController:nav animated:YES completion:nil];
     
 }
 
 #pragma mark - 加载视图控件
 - (void)setUpData
 {
-    //1 初始化图片数组
-    self.imagesArray = [[NSMutableArray alloc] init];
-    for (int i = 0 ; i < HMImageCount; i++) {
-        NSString * imageName = [NSString stringWithFormat:@"%d.jpg",i];
-        UIImage * image = [UIImage imageNamed:imageName];
-        [self.imagesArray addObject:image];
-    }
+    
     
     //2 初始化其他相关的值
     _totalPages = _imagesArray.count;
@@ -198,50 +253,36 @@
     _index = 0;
     _curImages = [[NSMutableArray alloc] init];
     
-    
     //3 初始化前面的scrollViewF
     UIScrollView * scrollViewB = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, self.view.height)];
     self.scrollViewB = scrollViewB;
     
-    scrollViewB.backgroundColor = [UIColor whiteColor];
+    scrollViewB.backgroundColor = [UIColor purpleColor];
     scrollViewB.showsHorizontalScrollIndicator = NO;
     scrollViewB.pagingEnabled = YES;
     scrollViewB.delegate = self;
-    scrollViewB.contentSize = CGSizeMake(self.view.frame.size.width * HMImageCount,0);
+    scrollViewB.contentSize = CGSizeMake(self.view.width * HMImageCount,0);
     [self.view addSubview:scrollViewB];
     
-    //3 初始化前面的scrollViewF
-    UIScrollView * scrollViewF = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, HeadViewH)];
-    self.scrollViewF = scrollViewF;
+    //3 初始化headView
+    UIView * headView = [[UIView alloc] init];
+    headView.frame = CGRectMake(0, 0, self.view.width, HeadViewH);
     
-    scrollViewF.backgroundColor = [UIColor clearColor];
+    //4 初始化前面的scrollViewF
+    UIScrollView * scrollViewF = [[UIScrollView alloc] init];
+    scrollViewF.frame = CGRectMake(0, 0, self.view.width, HeadViewH);
+//    scrollViewF.backgroundColor = [UIColor clearColor];
     scrollViewF.showsHorizontalScrollIndicator = NO;
     scrollViewF.pagingEnabled = YES;
     scrollViewF.delegate = self;
-    scrollViewF.contentSize = CGSizeMake(self.view.frame.size.width * HMImageCount,0);
-    //    [self.view addSubview:scrollViewF];
+    scrollViewF.contentSize = CGSizeMake(self.view.width * HMImageCount,0);
+    [self.view addSubview:scrollViewF];
+    self.scrollViewF = scrollViewF;
     
-    //4 初始化headView
-	UIView * headView = [[UIView alloc] init];
-    headView.backgroundColor = [UIColor clearColor];
-    headView.frame = CGRectMake(0, 0, self.view.width, HeadViewH);
-    [headView addSubview:scrollViewF];
     self.headView = headView;
-    //    [self.view addSubview:headView];
-    //添加轮播器说明文字
-    UILabel * headLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, headView.height - 44, 320, 30)];
-    headLabel.text = @"很漂亮的女孩啊,喜欢";
-    headLabel.textAlignment = NSTextAlignmentCenter;
-    headLabel.textColor = [UIColor whiteColor];
-    headLabel.font = [UIFont boldSystemFontOfSize:15];
-    //    label.backgroundColor = [UIColor redColor];
-    self.headLabel = headLabel;
-    [headView addSubview:headLabel];
-    
-    
+    [self.headView addSubview:scrollViewF];
     
     //5 添加 tableView
-    
     UITableView * tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
     self.tableview = tableView;
     tableView.backgroundColor = [UIColor clearColor];
@@ -252,8 +293,24 @@
 //    self.tableview.contentOffset = CGPointMake(0, -ContentInsetY);
     [self.view addSubview:tableView];
     
+    //6 设置headLabel,这里显示的文字应该和图片是相对应的,方便以后跳转到对应的控制器
+    CGFloat headLabelW = 200;
+    CGFloat headLabelH = 100;
+    CGFloat headLabelX = (headView.width - headLabelW) * 0.5;
+    CGFloat headLabelY = headView.height - 90;
+    UILabel * headLabel = [[UILabel alloc] init];
+    headLabel.numberOfLines = 0;
+    headLabel.frame = CGRectMake(headLabelX, headLabelY, headLabelW, headLabelH);
     
-    //6 设置状态栏背景
+    headLabel.text = nil;
+    headLabel.textAlignment = NSTextAlignmentCenter;
+    headLabel.textColor = [UIColor whiteColor];
+    headLabel.font = [UIFont boldSystemFontOfSize:16];
+    self.headLabel = headLabel;
+    [headView addSubview:headLabel];
+    
+    
+    //7 设置状态栏背景
     CGFloat statusH = 20;//状态栏固定高度
     UIView * statusView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, statusH)];
     //问题:如果用这个view装载label的话,在滚动到导航栏的位置时不能将组标题显示出来,因为需要组标题被顶开的动画(不好实现),所以采用分开设计的方式
@@ -265,7 +322,7 @@
     self.statusView = statusView;
     [self.view addSubview:statusView];
     
-    //7 添加自定义导航栏
+    //8 添加自定义导航栏
     UILabel * navLabel = [[UILabel alloc] init];
     self.navLabel = navLabel;
     navLabel.text = self.data[0];
@@ -280,7 +337,7 @@
     [self.view addSubview:navLabel];
     
     
-    //5 计算第一组标题滚动到顶部时tableView的contentOffet的y偏移的距离
+    //9 计算第一组标题滚动到顶部时tableView的contentOffet的y偏移的距离
     //第一组标题到顶部时:0ffset移动的距离也就是第一次offset垂直方向上偏移的距离(640) = 10 行 * 44行高 + 200(headView的高度) - 20(额外的滚动区域)
     
     self.rowNum = CellCount;// cell的行数,取决于组模型中的item的个数
@@ -288,117 +345,94 @@
     self.headViewH = HeadViewH;//headView的高度
     self.contentInsetY = ContentInsetY;//额外的滚动区域
     self.firstOffsetY = self.rowNum * self.rowHeight + self.headViewH - self.contentInsetY;
-    
-    [self refreshScrollView];
-    [self addTimer];
-    [self addPageControl];
-    
-    
 }
 
 #pragma mark - 添加imageView设置scrollView的contentoffset
-
-- (void)refreshScrollView {
+- (void)refreshScrollView
+{
     
+    //前面的轮播器
     NSArray *subViewsF = [self.scrollViewF subviews];
     if([subViewsF count] != 0) {
         [subViewsF makeObjectsPerformSelector:@selector(removeFromSuperview)];
     }
-    
-    [self getDisplayImagesWithCurpage:_curPage];
-    
-    for (int i = 0; i < 3; i++) {
-        
-        UIImageView *imageView = [[UIImageView alloc] init];
-        imageView.backgroundColor = [UIColor clearColor];
-        imageView.userInteractionEnabled = YES;//打开的话让图片可以和用户交互
 
-        imageView.image = [_curImages objectAtIndex:i];
-        
-        imageView.frame = CGRectMake(i * self.scrollViewF.width, 0, self.scrollViewF.width, self.scrollViewF.height);
-        
-        [self.scrollViewF addSubview:imageView];
-    }
-    
-    
-    NSArray *subViewsB = [self.scrollViewF subviews];
-    if([subViewsB count] != 0) {
-        [subViewsB makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    }
+    [self getDisplayImagesWithCurpage:self.curPage];
 
     for (int i = 0; i < 3; i++) {
-        
-        UIImageView *imageView = [[UIImageView alloc] init];
-        imageView.backgroundColor = [UIColor clearColor];
-        imageView.userInteractionEnabled = YES;//打开的话让图片可以和用户交互
-        
-        imageView.image = [_curImages objectAtIndex:i];
-        
-        imageView.frame = CGRectMake(i * self.scrollViewB.width, 0, self.scrollViewB.width, self.scrollViewB.height);
-        
-        [self.scrollViewB addSubview:imageView];
+        #pragma mark - imageView换成按钮(可以监听点击事件)
+        UIButton * scrBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        scrBtn.frame = CGRectMake(i * self.view.width, 64, self.view.width, self.scrollViewF.height);
+        scrBtn.backgroundColor = [UIColor clearColor];
+
+        [scrBtn addTarget:self action:@selector(clickScrollViewPic) forControlEvents:UIControlEventTouchUpInside];
+        [self.scrollViewF addSubview:scrBtn];
     }
     
+    #warning 这个移除操作不能添加,添加之后按钮不响应点击了()
+//    NSArray *subViewsB = [self.scrollViewF subviews];
+//    if([subViewsB count] != 0) {
+//        [subViewsB makeObjectsPerformSelector:@selector(removeFromSuperview)];
+//    }
+
+    for (int i = 0; i < 3; i++) {
+        #pragma mark - imageView换成按钮
+        UIButton * scrBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        NSString * imageName = [[self.curImages objectAtIndex:i] imageName];
+        scrBtn.userInteractionEnabled = NO;
+        [scrBtn setImage:[UIImage imageNamed:imageName] forState:UIControlStateNormal];
+        scrBtn.frame = CGRectMake(i * self.view.width, 0, self.view.width, self.view.height);
+        [self.scrollViewB addSubview:scrBtn];
+    }
+
     [self.scrollViewF setContentOffset:CGPointMake(self.scrollViewF.width, 0)];
     [self.scrollViewB setContentOffset:CGPointMake(self.scrollViewB.width, 0)];
 }
 
+- (NSArray *)getDisplayImagesWithCurpage:(NSInteger)page
+{
+    
+    NSInteger pre = [self validPageValue:self.curPage-1];
+    NSInteger last = [self validPageValue:self.curPage+1];
+    
+    [self.curImages removeAllObjects];
+    
+    [self.curImages addObject:[self.imagesArray objectAtIndex:pre-1]];
+    [self.curImages addObject:[self.imagesArray objectAtIndex:page-1]];
+    [self.curImages addObject:[self.imagesArray objectAtIndex:last-1]];
+    
+    #pragma mark - 改变pageControl页码的时候改变headLabel的标题文字
+    self.headLabel.text = [self.curImages[1] desc];
+    
+    #pragma  mark - 在这设置pageControl的currentPage
+    self.pageControl.currentPage = self.curPage - 1;
 
-- (NSArray *)getDisplayImagesWithCurpage:(NSInteger)page {
-    
-    NSInteger pre = [self validPageValue:_curPage-1];
-    NSInteger last = [self validPageValue:_curPage+1];
-    
-    if (!_curImages) {
-        _curImages = [[NSMutableArray alloc] init];
-    }
-    
-    
-    [_curImages removeAllObjects];
-    
-    [_curImages addObject:[self.imagesArray objectAtIndex:pre-1]];
-    [_curImages addObject:[self.imagesArray objectAtIndex:page-1]];
-    [_curImages addObject:[self.imagesArray objectAtIndex:last-1]];
-    
-    #pragma  mark - 在这设置pageControl的页码值是对的
-    self.pageControl.currentPage = _curPage - 1;
-    
-    return _curImages;
+    return self.curImages;
 }
 
-- (NSInteger)validPageValue:(NSInteger)value {
+- (NSInteger)validPageValue:(NSInteger)value
+{
     
-    if(value == 0) value = _totalPages;                   // value＝1为第一张，value = 0为前面一张
-    if(value == _totalPages + 1) value = 1;
+    if(value == 0) value = self.totalPages;// value＝1为第一张，value = 0为前面一张
+    if(value == self.totalPages + 1) value = 1;
     
     return value;
 }
 
-/*
- *--------------------------------------------------------------------
- */
-
 #pragma mark - 添加定时器
 - (void)addTimer
 {
-    
-    _timer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(nextImage) userInfo:nil repeats:YES];
-    
+    _timer = [NSTimer scheduledTimerWithTimeInterval:3.0 target:self selector:@selector(nextImage) userInfo:nil repeats:YES];
     /**
      *  pragma mark - 将定时器添加到主消息循环中,即可在主线程中给NSTimer分配优先级,
      *  让它在主线程中同时运行(属于更新UI界面)
      */
     [[NSRunLoop currentRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
-    
 }
 #pragma mark - 添加pageControl
 - (void)addPageControl
 {
     UIPageControl * pageControl = [[UIPageControl alloc] init];
-    pageControl.pageIndicatorTintColor = [UIColor grayColor];
-    pageControl.currentPageIndicatorTintColor = [UIColor orangeColor];
-
-    
     CGFloat centerX = self.scrollViewF.frame.size.width * 0.5;
     CGFloat centerY = self.scrollViewF.frame.size.height * 0.96;
     pageControl.center = CGPointMake(centerX, centerY);
@@ -407,7 +441,7 @@
     pageControl.pageIndicatorTintColor = [UIColor grayColor];
     pageControl.currentPageIndicatorTintColor = [UIColor orangeColor];
     
-    #pragma mark - 10 设置分页总数为图片数组的长度
+    #pragma mark - 10 设置分页总数为图片模型数组的长度
     pageControl.numberOfPages = self.imagesArray.count;
     
     //将pageControl添加到headView上
@@ -420,8 +454,10 @@
 #pragma mark - 点击nextImage
 - (void)nextImage
 {
-    int x = self.scrollViewF.contentOffset.x;//当前的offset的x值
-//    int y = self.scrollViewB.contentOffset.x;
+    //当前的offset的x值
+    int x = self.scrollViewF.contentOffset.x;
+//    int y = self.scrollViewF.contentOffset.x;
+
     #pragma mark - index++ ,让 _scrollView.contentOffset 的值发生变
     _index++;
     [self.scrollViewF setContentOffset:CGPointMake(x * _index, 0) animated:YES];
@@ -454,18 +490,17 @@
         
         [self refreshScrollView];
     }
-    //pragma mark - index = 0 ,让 _scrollView.contentOffset 的值重置
-    //因为图片的循环滚动导致必须重置offset的值
+    #pragma mark - index = 0 ,让 _scrollView.contentOffset 的值重置
     _index = 0;
     
     
-    //垂直方向上滚动微调
+    //垂直方向上滚动微调(headView和后面轮播器y值偏移微调)
     CGRect viewF = self.scrollViewB.frame;
     //    NSLog(@"%@",NSStringFromCGRect(self.scrollViewB.frame));
     viewF.origin.y = -(self.tableview.contentOffset.y) * 0.3 - 70;
     self.scrollViewB.frame = viewF;
     
-    //水平方向上滚动约束
+    //水平方向上滚动约束条件(拖动时如果offset.x的值<=0 或者>= 最有一张.x图片会乱抖)
     CGPoint offset = self.scrollViewF.contentOffset;
     if (offset.x >0 && offset.x < self.view.width * (HMImageCount - 1)) {
         offset.x = self.scrollViewF.contentOffset.x;
@@ -473,7 +508,7 @@
         
     }
     
-    #pragma mark - 一下是决定组标题与导航栏相遇时标题文字更换的操作
+    #pragma mark - 以下是决定组标题与导航栏相遇时标题文字更换的操作
     self.lastOffset = self.tableview.contentOffset.y;
     //调整自定义导航栏和状态栏背景的透明度
     self.navLabel.alpha = (self.tableview.contentOffset.y + ContentInsetY)/ (HeadViewH - NavHAndStautsH);
@@ -481,7 +516,7 @@
     CGFloat al = self.navLabel.alpha;
     //赋值给状态栏背景view的透明度(不要用直接计算的方式,直接计算与导航栏的透明度显示过程不对称)
     self.statusView.alpha = al;
-    //第一组的标题滚动到顶部时,tableView.contenOffset.y 总共偏移的距离firstOffsetY(以每组10行cell.cell行高为44,headView的高度为200,额外的滚动区域为20为例,第一次偏移的距离是 == 640,公式在viewDidLoad方法中)
+    //第一组的标题滚动到顶部时,tableView.contenOffset.y 总共偏移的距离firstOffsetY(以每组10行cell.cell行高为44,headView的高度为250,额外的滚动区域为20为例,第一次偏移的距离是 == 670,公式在viewDidLoad方法中)
     if (self.lastOffset >= self.firstOffsetY) {
         self.navLabel.alpha = 0;
         //加上这句(可以控制轮播器移出顶部时状态栏的不见的情况)
@@ -489,7 +524,6 @@
     }
     
 }
-
 
 #pragma mark - 移除定时器
 - (void)removeTimer
@@ -502,29 +536,25 @@
 #pragma mark - 代理方法:开始拖拽时
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
-    
-    
     [self removeTimer];
-    
 }
 
 #pragma mark - 代理方法: 停止拖拽时
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
     [self addTimer];
-//    NSLog(@"停止拖拽");
 }
 
 #pragma mark - tableView数据源方法
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 5;
+    return self.data.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 10;
+    return CellCount;
 }
 
 
@@ -536,6 +566,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ID];
     }
     cell.textLabel.text = [NSString stringWithFormat:@"%ld",(long)indexPath.row];
+    
     return cell;
 }
 
@@ -562,6 +593,10 @@
     return SectionViewH;
 }
 
-
+#pragma mark - 选中某一行时顺便取消选中某一行
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [self.tableview deselectRowAtIndexPath:indexPath animated:YES];
+}
 
 @end

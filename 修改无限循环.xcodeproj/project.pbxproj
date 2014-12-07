@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		040BC1091A336E5A00A05CA1 /* HMImageModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 040BC1081A336E5A00A05CA1 /* HMImageModel.m */; };
 		043E7FC11A3294D300C025DA /* 0.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 043E7FBB1A3294D300C025DA /* 0.jpg */; };
 		043E7FC21A3294D300C025DA /* 1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 043E7FBC1A3294D300C025DA /* 1.jpg */; };
 		043E7FC31A3294D300C025DA /* 2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 043E7FBD1A3294D300C025DA /* 2.jpg */; };
@@ -28,6 +29,7 @@
 		04A368D71A3184FE00174FA6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 04A368D51A3184FE00174FA6 /* InfoPlist.strings */; };
 		04A368D91A3184FE00174FA6 /* ______Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A368D81A3184FE00174FA6 /* ______Tests.m */; };
 		04A368E71A31864200174FA6 /* HMViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A368E61A31864200174FA6 /* HMViewController.m */; };
+		04B1A3401A33FA7300374CC9 /* HMOneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B1A33F1A33FA7300374CC9 /* HMOneViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,6 +43,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		040BC1071A336E5A00A05CA1 /* HMImageModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HMImageModel.h; path = photo/HMImageModel.h; sourceTree = "<group>"; };
+		040BC1081A336E5A00A05CA1 /* HMImageModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HMImageModel.m; path = photo/HMImageModel.m; sourceTree = "<group>"; };
 		043E7FBB1A3294D300C025DA /* 0.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 0.jpg; sourceTree = "<group>"; };
 		043E7FBC1A3294D300C025DA /* 1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.jpg; sourceTree = "<group>"; };
 		043E7FBD1A3294D300C025DA /* 2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 2.jpg; sourceTree = "<group>"; };
@@ -68,6 +72,8 @@
 		04A368D81A3184FE00174FA6 /* ______Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "______Tests.m"; sourceTree = "<group>"; };
 		04A368E51A31864200174FA6 /* HMViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HMViewController.h; sourceTree = "<group>"; };
 		04A368E61A31864200174FA6 /* HMViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HMViewController.m; sourceTree = "<group>"; };
+		04B1A33E1A33FA7300374CC9 /* HMOneViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HMOneViewController.h; path = photo/HMOneViewController.h; sourceTree = "<group>"; };
+		04B1A33F1A33FA7300374CC9 /* HMOneViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HMOneViewController.m; path = photo/HMOneViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +116,10 @@
 		04A368A11A3184FD00174FA6 = {
 			isa = PBXGroup;
 			children = (
+				04B1A33E1A33FA7300374CC9 /* HMOneViewController.h */,
+				04B1A33F1A33FA7300374CC9 /* HMOneViewController.m */,
+				040BC1071A336E5A00A05CA1 /* HMImageModel.h */,
+				040BC1081A336E5A00A05CA1 /* HMImageModel.m */,
 				04532AB71A334FF000E5C30E /* UIView+FrameExpand.h */,
 				04532AB81A334FF000E5C30E /* UIView+FrameExpand.m */,
 				043E7FBA1A3294D300C025DA /* photo */,
@@ -287,10 +297,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04B1A3401A33FA7300374CC9 /* HMOneViewController.m in Sources */,
 				04A368E71A31864200174FA6 /* HMViewController.m in Sources */,
 				04A368BA1A3184FD00174FA6 /* main.m in Sources */,
 				04532AB91A334FF000E5C30E /* UIView+FrameExpand.m in Sources */,
 				04A368BE1A3184FD00174FA6 /* HMAppDelegate.m in Sources */,
+				040BC1091A336E5A00A05CA1 /* HMImageModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
