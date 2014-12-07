@@ -37,7 +37,7 @@
 /**
  *  tableView的额外滚动区域
  */
-#define ContentInsetY 20
+#define ContentInsetY 19
 /**
  *  headView的高度
  */
@@ -162,7 +162,10 @@
  *  scrollView上的button
  */
 @property (weak , nonatomic) UIButton * scrBtn;
-
+/**
+ *  导航栏view
+ */
+@property (weak , nonatomic) UIView * labelView;
 @end
 
 
@@ -228,6 +231,8 @@
 #pragma mark - 点击了图片轮播器上的图片(在这个方法里跳转轮播器图片所对应的控制器)
 - (void)clickScrollViewPic
 {
+    //点击图片时候移除定时,滚动轮播器或者上下拉动视图会重新开启定时器
+    [self removeTimer];
 //    NSLog(@"点击了%@===200行",[self.curImages[1] imageName]);
     HMOneViewController * vc = [[HMOneViewController alloc] init];
     // 1 取出当前显示的图片的模型
@@ -323,18 +328,28 @@
     [self.view addSubview:statusView];
     
     //8 添加自定义导航栏
+    UIView *labelView = [[UIView alloc]initWithFrame:CGRectMake(0, statusView.height, self.view.width, ConstH)];
+    labelView.backgroundColor = [UIColor redColor];
+    labelView.hidden = YES;
+    labelView.alpha = 0;
+    self.labelView = labelView;
+    [self.view addSubview:labelView];
+    
     UILabel * navLabel = [[UILabel alloc] init];
     self.navLabel = navLabel;
     navLabel.text = self.data[0];
-    navLabel.frame = CGRectMake(0, statusView.height, self.view.width, ConstH);
-    navLabel.backgroundColor = [UIColor redColor];
+    // y值微调整(-1:IPhone6 自定义的状态栏和导航栏衔接的时候会有一条线,将tableview的contenoffset调整为19就好好了)
+    // -1 :只是调整自定义导航栏内部的label位置,让其被tebleview第0组标题顶住交换标题文字时出现小跳的现象
+    // 原因是因为:tableView的offsetTop上移1,所以让tebleview第0组标题与导航栏相遇时出现了1的偏差
+    navLabel.frame = CGRectMake(0, -1, labelView.width, labelView.height);
+    navLabel.backgroundColor = [UIColor clearColor];
     navLabel.textAlignment = NSTextAlignmentCenter;
-    navLabel.alpha = 0;
+//    navLabel.alpha = 0;
     //程序启动时,状态栏不是全透明(多重操作引起的),所以开始设置为隐藏(原因不明)
     //开始拖拽时,让隐藏等于NO
-    navLabel.hidden = YES;
+//    navLabel.hidden = YES;
     navLabel.font = [UIFont boldSystemFontOfSize:NavTextFont];
-    [self.view addSubview:navLabel];
+    [self.labelView addSubview:navLabel];
     
     
     //9 计算第一组标题滚动到顶部时tableView的contentOffet的y偏移的距离
@@ -472,8 +487,9 @@
     if (self.tableview.contentOffset.y >0 ) {
         //判断开始的时候tableView的contentOffset.y如果大于0就让导航栏和状态栏的隐藏 = NO;
         //解决的是程序头次启动时:会看到导航栏和状态栏背景,(因为其他操作到时不能全透明)
-        self.navLabel.hidden = NO;
+//        self.navLabel.hidden = NO;
         self.statusView.hidden = NO;
+        self.labelView.hidden = NO;
     }
 
     NSInteger x = self.scrollViewF.contentOffset.x;
@@ -511,14 +527,18 @@
     #pragma mark - 以下是决定组标题与导航栏相遇时标题文字更换的操作
     self.lastOffset = self.tableview.contentOffset.y;
     //调整自定义导航栏和状态栏背景的透明度
-    self.navLabel.alpha = (self.tableview.contentOffset.y + ContentInsetY)/ (HeadViewH - NavHAndStautsH);
+//    self.navLabel.alpha = (self.tableview.contentOffset.y + ContentInsetY)/ (HeadViewH - NavHAndStautsH);
+    self.labelView.alpha = (self.tableview.contentOffset.y + ContentInsetY)/ (HeadViewH - NavHAndStautsH);
     //获取导航栏透明度的值
-    CGFloat al = self.navLabel.alpha;
+//    CGFloat al = self.navLabel.alpha;
+    CGFloat al = self.labelView.alpha;
     //赋值给状态栏背景view的透明度(不要用直接计算的方式,直接计算与导航栏的透明度显示过程不对称)
     self.statusView.alpha = al;
     //第一组的标题滚动到顶部时,tableView.contenOffset.y 总共偏移的距离firstOffsetY(以每组10行cell.cell行高为44,headView的高度为250,额外的滚动区域为20为例,第一次偏移的距离是 == 670,公式在viewDidLoad方法中)
     if (self.lastOffset >= self.firstOffsetY) {
-        self.navLabel.alpha = 0;
+//        self.navLabel.alpha = 0;
+//        self.labelView.alpha = 0;
+        self.labelView.hidden = YES;
         //加上这句(可以控制轮播器移出顶部时状态栏的不见的情况)
         self.statusView.alpha = 1;
     }
@@ -566,7 +586,6 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ID];
     }
     cell.textLabel.text = [NSString stringWithFormat:@"%ld",(long)indexPath.row];
-    
     return cell;
 }
 

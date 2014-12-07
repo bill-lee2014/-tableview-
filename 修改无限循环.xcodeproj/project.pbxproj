@@ -45,6 +45,7 @@
 /* Begin PBXFileReference section */
 		040BC1071A336E5A00A05CA1 /* HMImageModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HMImageModel.h; path = photo/HMImageModel.h; sourceTree = "<group>"; };
 		040BC1081A336E5A00A05CA1 /* HMImageModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HMImageModel.m; path = photo/HMImageModel.m; sourceTree = "<group>"; };
+		041F02F81A34544D00B6DF0A /* 设计思路.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "设计思路.h"; sourceTree = "<group>"; };
 		043E7FBB1A3294D300C025DA /* 0.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 0.jpg; sourceTree = "<group>"; };
 		043E7FBC1A3294D300C025DA /* 1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.jpg; sourceTree = "<group>"; };
 		043E7FBD1A3294D300C025DA /* 2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 2.jpg; sourceTree = "<group>"; };
@@ -116,6 +117,7 @@
 		04A368A11A3184FD00174FA6 = {
 			isa = PBXGroup;
 			children = (
+				041F02F81A34544D00B6DF0A /* 设计思路.h */,
 				04B1A33E1A33FA7300374CC9 /* HMOneViewController.h */,
 				04B1A33F1A33FA7300374CC9 /* HMOneViewController.m */,
 				040BC1071A336E5A00A05CA1 /* HMImageModel.h */,
